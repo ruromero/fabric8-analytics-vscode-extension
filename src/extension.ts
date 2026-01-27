@@ -21,16 +21,21 @@ import { LLMAnalysisReportPanel } from './llmAnalysisReportPanel';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import CliTable3 = require('cli-table3');
 import { Language, Parser, Query } from 'web-tree-sitter';
+import { RhdaMcpServerManager } from './mcp/manager';
 
 export let outputChannelDep: DepOutputChannel;
 
 export const notifications = new EventEmitter();
+
+let mcpServerManager: RhdaMcpServerManager | null = null;
+let extensionContext: vscode.ExtensionContext | null = null;
 
 /**
  * Activates the extension upon launch.
  * @param context - The extension context.
  */
 export async function activate(context: vscode.ExtensionContext) {
+  extensionContext = context;
   outputChannelDep = new DepOutputChannel();
   outputChannelDep.info(`starting RHDA extension ${context.extension.packageJSON['version']}`);
 
@@ -352,6 +357,21 @@ export async function activate(context: vscode.ExtensionContext) {
     throw err;
   }
 
+  // Register MCP server with Cursor if enabled
+  // Note: The server will be launched as a separate process by Cursor, not in-process
+  if (globalConfig.mcpServerEnabled) {
+    try {
+      mcpServerManager = new RhdaMcpServerManager(outputChannelDep, context, globalConfig.backendUrl || '');
+      await mcpServerManager.register();
+      outputChannelDep.info('RHDA Local MCP server registered');
+    } catch (error) {
+      outputChannelDep.error(`Failed to register MCP server: ${(error as Error).message}`);
+      vscode.window.showWarningMessage('Failed to register RHDA MCP server. Check the output channel for details.');
+    }
+  } else {
+    outputChannelDep.info('RHDA Local MCP server is disabled');
+  }
+
   context.subscriptions.push(
     disposableLLMAnalysisReportCommand,
     disposableStackAnalysisCommand,
@@ -360,15 +380,45 @@ export async function activate(context: vscode.ExtensionContext) {
     caStatusBarProvider,
   );
 
-  vscode.workspace.onDidChangeConfiguration(() => {
+  vscode.workspace.onDidChangeConfiguration(async () => {
     globalConfig.loadData();
+
+    if (globalConfig.mcpServerEnabled && !mcpServerManager) {
+      try {
+        mcpServerManager = new RhdaMcpServerManager(outputChannelDep, context, globalConfig.backendUrl || '');
+        await mcpServerManager.register();
+        outputChannelDep.info('RHDA Local MCP server registered');
+      } catch (error) {
+        outputChannelDep.error(`Failed to register MCP server: ${(error as Error).message}`);
+        vscode.window.showWarningMessage('Failed to register RHDA MCP server. Check the output channel for details.');
+      }
+    } else if (!globalConfig.mcpServerEnabled && mcpServerManager) {
+      await mcpServerManager.unregister();
+      mcpServerManager = null;
+      outputChannelDep.info('RHDA Local MCP server is unregistered');
+    } else if (globalConfig.mcpServerEnabled && mcpServerManager) {
+      // If already registered but backend URL might have changed, re-register
+      // Note: This is a simple approach - in a production scenario, you might want to
+      // check if the backend URL actually changed before re-registering
+      await mcpServerManager.unregister();
+      mcpServerManager = new RhdaMcpServerManager(outputChannelDep, context, globalConfig.backendUrl || '');
+      await mcpServerManager.register();
+      outputChannelDep.info('RHDA Local MCP server re-registered with updated configuration');
+    }
   });
 }
 
 /**
  * Deactivates the extension.
  */
-export function deactivate(): Thenable<void> { return new Promise(resolve => resolve()); }
+export async function deactivate(): Promise<void> {
+  if (mcpServerManager) {
+    await mcpServerManager.unregister();
+    mcpServerManager = null;
+    outputChannelDep.info('RHDA Local MCP server unregistered');
+  }
+  extensionContext = null;
+}
 
 /**
  * Shows an update notification if the extension has been updated to a new version.

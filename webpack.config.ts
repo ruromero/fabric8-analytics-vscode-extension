@@ -2,13 +2,16 @@
 
 'use strict';
 
-import * as webpack from 'webpack';
-import * as path from 'path';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-import CopyPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const path = require('path');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = () => {
-  const config: webpack.Configuration = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const config: any = {
     target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
     entry: './src/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
     output: {

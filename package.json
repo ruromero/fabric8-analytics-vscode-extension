@@ -194,6 +194,12 @@
           "markdownDescription": "Exhort backend URL to use for stack, component & image analysis.",
           "scope": "window"
         },
+        "redHatDependencyAnalytics.mcpServer.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable Local MCP server for Red Hat Dependency Analytics.",
+          "scope": "window"
+        },
         "redHatDependencyAnalytics.matchManifestVersions": {
           "type": "boolean",
           "default": true,
@@ -432,6 +438,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.24.2",
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
     "@trustify-da/trustify-da-api-model": "^2.0.1",
     "@trustify-da/trustify-da-javascript-client": "^0.2.4-ea.96817e4",
@@ -445,6 +452,7 @@
     "node-html-parser": "^7.0.1",
     "path": "^0.12.7",
     "tree-sitter-python": "^0.23.6",
-    "web-tree-sitter": "^0.25.6"
+    "web-tree-sitter": "^0.25.6",
+    "zod": "^3.23.8"
   }
 }

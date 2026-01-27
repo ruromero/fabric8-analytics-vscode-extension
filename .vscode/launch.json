@@ -12,7 +12,7 @@
 			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"${workspaceFolder}/test-workspace"
+				"${workspaceFolder}/../../bmozaffa/postgresql-vulnerability-example"
 			],
 			"sourceMaps": true,
 			"outFiles": [

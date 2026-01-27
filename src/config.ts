@@ -46,6 +46,7 @@ class Config {
   exhortDockerPath!: string;
   exhortPodmanPath!: string;
   exhortImagePlatform!: string;
+  mcpServerEnabled!: boolean;
   excludePatterns!: Minimatch[];
 
   private readonly DEFAULT_BACKEND_URL = 'https://rhda.rhcloud.com';
@@ -138,6 +139,7 @@ class Config {
     this.exhortDockerPath = rhdaConfig.docker.executable.path || this.DEFAULT_DOCKER_EXECUTABLE;
     this.exhortPodmanPath = rhdaConfig.podman.executable.path || this.DEFAULT_PODMAN_EXECUTABLE;
     this.exhortImagePlatform = rhdaConfig.imagePlatform;
+    this.mcpServerEnabled = rhdaConfig.mcpServer.enabled;
     this.excludePatterns = (rhdaConfig.exclude as string[]).map(pattern => new Minimatch(pattern));
   }
 
