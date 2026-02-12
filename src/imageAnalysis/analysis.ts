@@ -37,7 +37,8 @@ class ImageData {
     public sourceId: string,
     public issuesCount: number,
     public recommendationRef: string,
-    public highestVulnerabilitySeverity: string
+    public highestVulnerabilitySeverity: string,
+    public highestVulnerabilityCVE: string
   ) { }
 }
 
@@ -75,6 +76,7 @@ class AnalysisResponse {
             this.getTotalIssues(artifact.summary),
             this.getRecommendation(artifact.dependencies),
             this.getHighestSeverity(artifact.summary),
+            this.getHighestVulnerabilityCVE(artifact.dependencies)
           );
 
           const dataArray = this.images.get(imageRef) || [];
@@ -125,6 +127,23 @@ class AnalysisResponse {
     }
 
     return highestSeverity;
+  }
+  /**
+   * Retrieves the highest vulnerability CVE from a source summary.
+   * @param summary The source summary object.
+   * @returns The highest CVE or NONE if none exists.
+   * @private
+   */
+  private getHighestVulnerabilityCVE(dependencies: DependencyReport[] | undefined): string {
+    let highestVulnerabilityCVE = 'NONE';
+    if (dependencies && dependencies.length > 0) {
+      for (const dependency of dependencies) {
+        if (isDefined(dependency, 'highestVulnerability', 'id')) {
+          highestVulnerabilityCVE = dependency.highestVulnerability.id;
+        }
+      }
+    }
+    return highestVulnerabilityCVE;
   }
 
   /**

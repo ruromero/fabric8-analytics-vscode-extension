@@ -20,6 +20,66 @@
 			],
 			"preLaunchTask": "npm: webpack-dev",
 		},
+    {
+			"name": "Test scenario 1",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"/Users/rromerom/workspace/presentations/rhda-mcp-demos/scenario-01"
+			],
+			"sourceMaps": true,
+			"outFiles": [
+				"${workspaceFolder}/dist/*.js"
+			],
+			"preLaunchTask": "npm: webpack-dev",
+		},
+    {
+			"name": "Test scenario 2",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"/Users/rromerom/workspace/presentations/rhda-mcp-demos/scenario-02"
+			],
+			"sourceMaps": true,
+			"outFiles": [
+				"${workspaceFolder}/dist/*.js"
+			],
+			"preLaunchTask": "npm: webpack-dev",
+		},
+    {
+			"name": "Test scenario 3",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"/Users/rromerom/workspace/presentations/rhda-mcp-demos/scenario-03"
+			],
+			"sourceMaps": true,
+			"outFiles": [
+				"${workspaceFolder}/dist/*.js"
+			],
+			"preLaunchTask": "npm: webpack-dev",
+		},
+    {
+			"name": "Test scenario 4",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"/Users/rromerom/workspace/presentations/rhda-mcp-demos/scenario-04"
+			],
+			"sourceMaps": true,
+			"outFiles": [
+				"${workspaceFolder}/dist/*.js"
+			],
+			"preLaunchTask": "npm: webpack-dev",
+		},
 		{
 			"name": "Launch Tests",
 			"type": "extensionHost",

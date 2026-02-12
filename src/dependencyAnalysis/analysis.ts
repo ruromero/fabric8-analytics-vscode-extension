@@ -56,7 +56,8 @@ class DependencyData {
     public issuesCount: number,
     public recommendationRef: string,
     public remediationRef: string,
-    public highestVulnerabilitySeverity: string
+    public highestVulnerabilitySeverity: string,
+    public highestVulnerabilityCVE: string
   ) { }
 }
 
@@ -122,8 +123,8 @@ class AnalysisResponse {
             const issuesCount: number = isDefined(d, 'issues') ? d.issues.length : 0;
 
             const dd = issuesCount
-              ? new DependencyData(source.id, issuesCount, '', this.getRemediation(d.issues![0]), this.getHighestSeverity(d))
-              : new DependencyData(source.id, issuesCount, this.getRecommendation(d), '', this.getHighestSeverity(d));
+              ? new DependencyData(source.id, issuesCount, '', this.getRemediation(d.issues![0]), this.getHighestSeverity(d), this.getHighestVulnerabilityCVE(d))
+              : new DependencyData(source.id, issuesCount, this.getRecommendation(d), '', this.getHighestSeverity(d), this.getHighestVulnerabilityCVE(d));
 
             const resolvedRef = this.provider.resolveDependencyFromReference(d.ref);
             const something = (this.dependencies.get(resolvedRef) || []);
@@ -161,6 +162,16 @@ class AnalysisResponse {
    */
   private getHighestSeverity(dependency: DependencyReport): string {
     return isDefined(dependency, 'highestVulnerability', 'severity') ? dependency.highestVulnerability.severity : 'NONE';
+  }
+
+  /**
+   * Retrieves the highest vulnerability severity value from a dependency.
+   * @param dependency The dependency object.
+   * @returns The highest severity level or NONE if none exists.
+   * @private
+   */
+  private getHighestVulnerabilityCVE(dependency: DependencyReport): string {
+    return isDefined(dependency, 'highestVulnerability', 'id') ? dependency.highestVulnerability.id : 'NONE';
   }
 
   /**
